@@ -42,7 +42,20 @@ Além disso, é crucial ajustar o tamanho das tarefas (granularidade) para equil
 
 ## Arquitetura de GPUs e Programação em CUDA
 
+  A arquitetura de GPU é projetada para alto paralelismo e throughput, originalmente para gráficos, mas agora amplamente usada para computação geral (GPGPU). GPUs modernas, como as da NVIDIA, consistem em centenas ou milhares de núcleos (Streaming Multiprocessors - SMs) organizados para executar milhares de threads simultaneamente. Cada SM contém múltiplas unidades de execução SIMD (Single Instruction, Multiple Data) que operam em grupos de threads chamados warps (32 threads por warp). Esses warps são executados de forma sincronizada, mas o hardware gerencia divergências de forma dinâmica. A memória é hierarquizada: registradores por thread, memória compartilhada por bloco (rápida e on-chip) e memória global (mais lenta, off-chip). A largura de banda de memória é extremamente alta (ex.: 900 GB/s no V100) para alimentar os núcleos de computação.
+
+  A programação CUDA permite explorar essa arquitetura através de um modelo de programação que combina elementos de paralelismo de dados e espaço de endereçamento compartilhado. O programa é estruturado em kernels executados na GPU, lançados em uma grade (grid) de blocos de threads. Cada bloco tem threads que cooperam via memória compartilhada e sincronização (__syncthreads()), enquanto os blocos são independentes e escalonados dinamicamente pela GPU. O código CUDA gerencia explicitamente a transferência de dados entre a memória do host (CPU) e a memória global do device (GPU) usando funções como cudaMemcpy. Para eficiência, é crítico minimizar acessos à memória global, aproveitando a memória compartilhada e garantindo coalescência de acessos. O modelo SIMT (Single Instruction, Multiple Threads) do CUada permite que threads em um warp executem a mesma instrução simultaneamente, mas divergências (como branches condicionais) podem reduzir o desempenho. O sucesso na programação CUDA depende de entender essa hierarquia de memória, a organização dos threads e a capacidade de mapear problemas para uma execução massivamente paralela.
+
 ## Processamento data-parallel
+
+  O **data-parallel (paralelismo de dados)** é um modelo de programação que organiza a computação como **operações sobre sequências de elementos**, em vez de se focar explicitamente na atribuição de trabalho a "trabalhadores" (threads ou processos). A ideia central é expressar algoritmos por meio de **operações de alto nível** (como `map`, `reduce`, `scan`, `filter`, `sort`, `groupBy`, entre outras) que atuam em coleções de dados, permitindo que implementações paralelas eficientes dessas primitives sejam aproveitadas automaticamente.
+
+Esse modelo é particularmente poderoso para **aplicações com grande volume de dados** (como processamento de imagens, simulações científicas, aprendizado de máquina e análise de grandes bases) porque:
+- **Explicita o paralelismo inerente**: operações como `map` (aplicar uma função a todos os elementos) ou `reduce` (combinar elementos com uma operação) são intrinsicamente paralelizáveis, pois não possuem dependências entre elementos.
+- **Reduz a complexidade de sincronização**: ao trabalhar com operações coletivas, o programador evita o uso explícito de locks ou atomic operations, confiando em implementações otimizadas dessas primitivas.
+- **Facilita a escalabilidade**: algoritmos escritos nesse estilo podem ser executados eficientemente em diversas arquiteturas (multicore, GPU, clusters) desde que haja implementações paralelas das operações básicas.
+
+No entanto, uma desvantagem comum é o **aumento no consumo de largura de banda de memória**, já muitas soluções data-parallel envolvem múltiplas passadas sobre os dados (ex.: ordenar para depois agrupar). Mesmo assim, o modelo é a base de sistemas populares como **Apache Spark**, **CUDA Thrust** e bibliotecas de dataframes (ex.: Pandas), mostrando sua utilidade prática para processamento paralelo e distribuído de larga escala.
 
 ## Distributed Data-Parallel Computing Using Spark
 
