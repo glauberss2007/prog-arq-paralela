@@ -32,7 +32,13 @@ A orquestração lida com a coordenação e a sincronização necessárias para 
 
 ## Otimizações de desempenho: distribuição de carga e escalonamento
 
+A otimização de desempenho em programas paralelos envolve um equilíbrio delicado entre distribuição eficiente de carga e minimização de sobrecargas. O objetivo principal é garantir que todos os processadores estejam ocupados durante a maior parte do tempo de execução, evitando ociosidade e maximizando o aproveitamento dos recursos. Isso pode ser alcançado por meio de técnicas como atribuição estática — quando a carga de trabalho é previsível e uniforme — ou atribuição dinâmica — quando a carga é irregular ou imprevisível, utilizando filas de tarefas compartilhadas ou distribuídas com mecanismos como work stealing.
+
+Além disso, é crucial ajustar o tamanho das tarefas (granularidade) para equilibrar a sobrecarga de sincronização e o potencial de paralelismo. Abordagens como fork-join e agendamento inteligente (por exemplo, executando tarefas longas primeiro) ajudam a reduzir ociosidade e melhorar o balanceamento. Sistemas como Cilk Plus implementam escalonamento com roubo de trabalho (work stealing), que promove boa localidade e baixa contenção, assegurando que que quebras de carga sejam tratadas de forma eficiente sem comprometer o desempenho geral.
+
 ## Otimizações de desempenho: comunicação e localidade
+
+  A otimização de comunicação e localidade é fundamental para o desempenho em sistemas paralelos, pois evita gargalos relacionados ao acesso à memória e à transferência de dados. A localidade refere-se à organização dos acessos à memória de forma a maximizar a reutilização de dados já presentes em caches próximos ao processador, reduzindo assim a necessidade de comunicação com memórias mais lentas ou remotas. Técnicas como blocking (blocagem) e fusão de loops são exemplos clássicos para melhorar a localidade temporal, permitindo que os dados permaneçam em cache por mais tempo e reduzindo a quantidade de comunicação artifactual (aquela gerada por detalhes de implementação do sistema, como transferência de linhas de cache desnecessárias).
 
 ## Arquitetura de GPUs e Programação em CUDA
 
