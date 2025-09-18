@@ -1,44 +1,17 @@
-CXX=g++ -m64 -march=native
-CXXFLAGS=-I../common -Iobjs/ -O3 -Wall
-ISPC=ispc
-# note: requires AVX2 capable machine
-ISPCFLAGS=-O3 --target=avx2-i32x8 --arch=x86-64 --pic
+CXX = g++
+CXXFLAGS = -O3 -march=native -mavx2 -mfma -pthread -std=c++17
+TARGET = sqrt_benchmark
+SOURCES = sqrt_benchmark.cpp
 
+all: $(TARGET)
 
-APP_NAME=sqrt
-OBJDIR=objs
-COMMONDIR=../common
-
-PPM_CXX=$(COMMONDIR)/ppm.cpp
-PPM_OBJ=$(addprefix $(OBJDIR)/, $(subst $(COMMONDIR)/,, $(PPM_CXX:.cpp=.o)))
-
-TASKSYS_CXX=$(COMMONDIR)/tasksys.cpp
-TASKSYS_LIB=-lpthread
-TASKSYS_OBJ=$(addprefix $(OBJDIR)/, $(subst $(COMMONDIR)/,, $(TASKSYS_CXX:.cpp=.o)))
-
-default: $(APP_NAME)
-
-.PHONY: dirs clean
-
-dirs:
-		/bin/mkdir -p $(OBJDIR)/
+$(TARGET): $(SOURCES)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SOURCES)
 
 clean:
-		/bin/rm -rf $(OBJDIR) *.ppm *~ $(APP_NAME)
+	rm -f $(TARGET) *.csv
 
-OBJS=$(OBJDIR)/main.o $(OBJDIR)/sqrtSerial.o $(OBJDIR)/sqrt_ispc.o $(PPM_OBJ) $(TASKSYS_OBJ)
+run: $(TARGET)
+	./$(TARGET)
 
-$(APP_NAME): dirs $(OBJS)
-		$(CXX) $(CXXFLAGS) -o $@ $(OBJS) -lm $(TASKSYS_LIB)
-
-$(OBJDIR)/%.o: %.cpp
-		$(CXX) $< $(CXXFLAGS) -c -o $@
-
-$(OBJDIR)/%.o: $(COMMONDIR)/%.cpp
-	$(CXX) $< $(CXXFLAGS) -c -o $@
-
-$(OBJDIR)/main.o: $(OBJDIR)/$(APP_NAME)_ispc.h $(COMMONDIR)/CycleTimer.h
-
-$(OBJDIR)/%_ispc.h $(OBJDIR)//%_ispc.o: %.ispc
-		$(ISPC) $(ISPCFLAGS) $< -o $(OBJDIR)/$*_ispc.o -h $(OBJDIR)/$*_ispc.h
-
+.PHONY: all clean run
