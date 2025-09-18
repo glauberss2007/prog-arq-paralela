@@ -24,6 +24,102 @@
 
 A orquestração lida com a coordenação e a sincronização necessárias para garantir corretude quando as tarefas acessam dados compartilhados ou possuem dependências. Isso inclui o uso de primitivas como locks para exclusão mútua em seções críticas e barriers para dividir a execução em fases sincronizadas. Por fim, o mapeamento traduz as threads lógicas em recursos físicos de hardware, como núcleos de CPU ou unidades de execução em GPU, considerando fatores como localidade de dados e eficiência. A apresentação ilustra esses conceitos com um caso prático de um solver de grade 2D, mostrando como a reestruturação do algoritmo (usando coloração vermelho-preto) pode revelar mais paralelismo e como diferentes modelos de programação (como espaço de endereçamento compartilhado com threads SPMD ou paradigma data-parallel) oferecem trade-offs entre controle, abstração e desempenho. O entendimento desses fundamentos é essencial para desenvolver programas paralelos eficientes que realmente aproveitem o poder de hardware moderno.
 
+## Implementaçao mandelbrot & saxpy & sqrt
+
+Os experimentos foram implementados em C++ para execução de alto desempenho, com os resultados salvos em arquivos CSV. Estes arquivos são subsequentemente processados por scripts Python para geração de gráficos e análise estatística dos resultados.
+
+### Pré-requisitos do Sistema
+
+- **Sistema Operacional**: Linux Ubuntu/Debian
+- **Compilador**: GCC/G++ (versão 9 ou superior)
+- **Ferramentas**: Make, CMake
+- **Linguagens**: Python 3.8+
+- **Dependências**: ISPC (Intel SPMD Program Compiler)
+
+### Procedimento de Instalação
+
+1. **Clone o repositório**:
+   ```bash
+   git clone <url-do-repositorio>
+   cd <nome-do-repositorio>
+   ```
+
+2. **Instale as dependências do sistema**:
+   ```bash
+   # Execute o script de instalação completo
+   chmod +x install_dependencies.sh
+   ./install_dependencies.sh
+   
+   # Ou instale manualmente:
+   sudo apt update
+   sudo apt install g++ make cmake python3 python3-pip
+   pip3 install matplotlib numpy pandas seaborn
+   ```
+
+3. **Instale o ISPC**:
+   ```bash
+   chmod +x install_ispc.sh
+   ./install_ispc.sh
+   ```
+
+### Execução dos Experimentos
+
+Para cada experimento, siga os seguintes passos:
+
+#### Experimento 1: Fractais de Mandelbrot
+```bash
+cd mandelbrot/
+make          # Compila o código C++
+make run      # Executa o experimento
+# ou: ./mandelbrot_experiment
+python3 analyze.py  # Gera gráficos e estatísticas
+```
+
+#### Experimento 2: Cálculo de Raiz Quadrada
+```bash
+cd sqrt/
+make
+./sqrt_experiment
+python3 analyze_sqrt.py
+```
+
+#### Experimento 3: Operação SAXPY (Álgebra Linear)
+```bash
+cd saxpy/
+make
+./saxpy_experiment
+python3 analyze_saxpy.py
+```
+
+### Estrutura de Arquivos Gerados
+
+Cada experimento gera os seguintes arquivos:
+
+- **`*.csv`**: Resultados brutos das execuções
+- **`*_analysis.png`**: Gráficos de análise de performance
+- **`*_report.txt`**: Relatório estatístico detalhado
+
+### Comandos Úteis Adicionais
+
+- **Limpar arquivos compilados**: `make clean`
+- **Verificar suporte AVX**: `g++ -march=native -dM -E - < /dev/null | grep AVX`
+- **Monitorar performance**: `htop` ou `perf stat ./experimento`
+
+### Notas Importantes
+
+1. **Performance**: Para resultados otimizados, execute os experimentos em modo performance:
+   ```bash
+   sudo cpufreq-set -g performance
+   ```
+
+2. **Memória**: Alguns experimentos utilizam grandes volumes de dados (até 20 milhões de elementos), certifique-se de ter memória RAM suficiente.
+
+3. **Tempo de Execução**: Os experimentos podem levar vários minutos para completar, dependendo do hardware.
+
+4. **Resultados**: Os arquivos CSV contêm dados detalhados de tempo de execução, speedup, bandwidth e eficiência para cada implementação testada.
+
+Este fluxo de trabalho permite a reprodução consistente dos experimentos e análise comparativa dos resultados de paralelização e vetorização.
+
 ## OpenMP
 
   O OpenMP (Open Multi-Processing) é um padrão amplamente utilizado para programação paralela em sistemas de memória compartilhada. Ele permite que desenvolvedores criem aplicações paralelas de forma incremental, adicionando diretivas de compilação (pragma) ao código C/C++ existente, sem a necessidade de reescrever completamente o programa. O modelo de programação do OpenMP é baseado em threads, onde um thread principal (master) forka uma equipe (team) de threads escravas (slaves) para executar blocos de código em paralelo, sincronizando-se e juntando-se ao término da execução. Essa abordagem simplifica a paralelização de loops e tarefas, tornando-a acessível mesmo para programadores com experiência limitada em concorrência.
