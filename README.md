@@ -155,6 +155,26 @@ No entanto, uma desvantagem comum é o **aumento no consumo de largura de banda 
 
 ## Distributed Data-Parallel Computing Using Spark
 
+Computação Distribuída Paralela de Dados é um modelo de programação que permite processar grandes volumes de dados dividindo o trabalho **horizontalmente** através de um cluster de computadores, onde o **Apache Spark** atua como o framework que orquestra todo esse processamento de forma distribuída e paralela.
+
+### Como Funciona na Prática:
+
+1. **Divisão dos Dados**: Os dados são automaticamente particionados em múltiplos pedaços (partições) distribuídos pelos nós do cluster.
+2. **Processamento Paralelo**: Cada nó processa sua partição de dados simultaneamente, aplicando as mesmas operações de forma independente.
+3. **Coordenação Centralizada**: O Spark gerencia a distribuição das tarefas, o agrupamento de resultados intermediários e a coleta dos resultados finais.
+
+No exemplo de contagem de palavras (Word Count):
+- **Map**: Cada nó conta palavras localmente em seus blocos de dados
+- **Shuffle**: O Spark reorganiza os dados para agrupar todas as ocorrências da mesma palavra
+- **Reduce**: Soma todas as ocorrências de cada palavra across do cluster
+
+#### Vantagens Chave:
+
+- **Escalabilidade**: Pode-se adicionar mais nós para processar datasets maiores
+- **Tolerância a Falhas**: Se um nó falhar, o Spark reassina suas partições para outros nós
+- **Eficiência**: Processamento paralelo reduz drasticamente o tempo de execução
+- **Abstração Simplificada**: Programadores trabalham com APIs de alto nível (como RDDs) sem se preocupar com comunicação de rede ou distribuição
+
 ## Coerência de Cache
 
 ## Consistência de Memória
