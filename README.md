@@ -175,6 +175,18 @@ No exemplo de contagem de palavras (Word Count):
 - **Eficiência**: Processamento paralelo reduz drasticamente o tempo de execução
 - **Abstração Simplificada**: Programadores trabalham com APIs de alto nível (como RDDs) sem se preocupar com comunicação de rede ou distribuição
 
+## MPI
+
+Com base no material sobre MPI, a **Message Passing Interface (MPI)** é um padrão para programação em sistemas de memória distribuída, permitindo a comunicação entre processos em diferentes nós de computação. Diferente dos modelos de memória compartilhada, no MPI cada processo tem seu próprio espaço de endereçamento, e a troca de dados é feita explicitamente por meio de operações de envio e recebimento de mensagens. O modelo mais comum é o **SPMD (Single Program, Multiple Data)**, onde o mesmo código é executado por todos os processos, mas cada um pode tomar caminhos diferentes com base em seu identificador único (*rank*).
+
+O MPI oferece tanto operações **ponto a ponto** (como `MPI_Send` e `MPI_Recv`) quanto operações **coletivas** (como `MPI_Reduce`, `MPI_Bcast`, `MPI_Scatter` e `MPI_Gather`), que são essenciais para a eficiência e a escalabilidade de aplicações paralelas. Essas operações coletivas permitem a sincronização, a redução e a distribuição de dados entre múltiplos processos de forma otimizada, evitando a complexidade de implementações manuais. No entanto, é preciso atenção a questões como *deadlock* e o uso seguro de operações de comunicação, especialmente em programas que dependem do comportamento de bloqueio ou não bloqueio das funções MPI.
+
+## DNN 
+
+Com base no material sobre a avaliação eficiente de Redes Neurais Profundas (DNNs), a implementação de operações como **convoluções** e **multiplicações de matrizes (GEMM)** é central para o desempenho desses modelos. A convolução, frequentemente implementada como uma operação de multiplicação de matrizes através de técnicas como **GEMM explícito ou implícito**, permite aproveitar bibliotecas altamente otimizadas, como cuDNN da NVIDIA ou oneDNN da Intel. No entanto, a materialização explícita da matriz de entrada pode levar a overhead de armazenamento e tráfego de memória, o que motivou o desenvolvimento de abordagens implícitas que preservam a localidade dos dados e reduzem o uso de memória.
+
+Além disso, técnicas de **fusão de operações** — como combinar convolução, adição de bias, ativação e pooling em um único kernel — são cruciais para minimizar a movimentação de dados entre a memória e os núcleos de processamento, reduzindo significativamente a latência e aumentando a eficiência. Compiladores modernos, como TVM e Triton, automatizam parte desse processo, permitindo a geração de kernels fundidos sob medida para arquiteturas específicas. Por fim, o uso de **baixa precisão** (16 bits, 8 bits ou até 1 bit) e algoritmos como Winograd ou FFT para convoluções oferecem ganhos adicionais de desempenho e eficiência energética, tornando possível a execução de DNNs complexas em tempo real, mesmo em dispositivos com recursos limitados.
+
 ## Coerência de Cache
 
 Com base no material apresentado, a **Coerência de Cache** é um mecanismo essencial em sistemas multiprocessados com memória compartilhada, onde múltiplos processadores mantêm cópias locais dos mesmos dados em suas caches. O problema surge quando uma atualização feita por um processador em sua cache local não é imediatamente visível para os outros, levando a leituras de valores desatualizados. Para garantir a consistência da memória compartilhada, é necessário assegurar que todas as leituras retornem o valor mais recente escrito por qualquer processador, conforme uma ordem serializável de operações.
