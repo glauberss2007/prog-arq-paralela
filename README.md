@@ -193,11 +193,11 @@ Com base no material apresentado, a **Coerência de Cache** é um mecanismo esse
 
 Para resolver esse problema, são utilizados **protocolos de coerência**, como MSI e MESI, baseados em invalidação ou atualização de cópias. Em sistemas com snooping, as transações de coerência são transmitidas a todas as caches, enquanto em abordagens com diretório, apenas os participantes relevantes são notificados. No entanto, a coerência introduz overheads de comunicação e pode causar problemas como o **false sharing**, quando processadores acessam endereços distintos na mesma linha de cache, gerando tráfego desnecessário e degradando o desempenho.
 
-## Consistência de Memória
+## Estratégias de sincronização FFine-grained e Lock-free
 
-## Estratégias de sincronização de grão-fino: Locks
+Com base no material sobre implementação de trancas (locks) e programação sem trancas (lock-free), a **sincronização de baixa granularidade (fine-grained locking)** surge como uma estratégia para aumentar o paralelismo em estruturas de dados compartilhadas, como listas ligadas. Diferente de uma única tranca global que serializa todas as operações, essa abordagem utiliza múltiplas trancas — por exemplo, uma por nó — permitindo que threads acessem diferentes partes da estrutura simultaneamente. No entanto, essa técnica introduz complexidade significativa, exigindo cuidado para evitar **deadlock** e garantir a correta aquisição e liberação de trancas durante o percurso da estrutura.
 
-## Sincronização grão-fino e programação Lock-free
+Já as **estruturas de dados lock-free** buscam eliminar completamente o uso de trancas, dependendo de operações atômicas como **compare-and-swap (CAS)** para garantir a consistência. Embora evitem problemas como bloqueio por preempção ou falhas de threads em seções críticas, enfrentam desafios como o **problema ABA** — onde um valor é alterado e depois restaurado, enganando uma operação atômica — e a necessidade de instruções especiais (ex.: DCAS) ou esquemas de contagem para garantir segurança. Essas implementações são valiosas em sistemas de alta disponibilidade, onde a progressão do sistema como um todo é crítica, mas exigem sincronização de memória explícita e podem sofrer com contenção repetida de CAS sob alta carga.
 
 ## Linguagens para Domínios Específicos (DSLs)
 
