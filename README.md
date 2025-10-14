@@ -177,6 +177,10 @@ No exemplo de contagem de palavras (Word Count):
 
 ## Coerência de Cache
 
+Com base no material apresentado, a **Coerência de Cache** é um mecanismo essencial em sistemas multiprocessados com memória compartilhada, onde múltiplos processadores mantêm cópias locais dos mesmos dados em suas caches. O problema surge quando uma atualização feita por um processador em sua cache local não é imediatamente visível para os outros, levando a leituras de valores desatualizados. Para garantir a consistência da memória compartilhada, é necessário assegurar que todas as leituras retornem o valor mais recente escrito por qualquer processador, conforme uma ordem serializável de operações.
+
+Para resolver esse problema, são utilizados **protocolos de coerência**, como MSI e MESI, baseados em invalidação ou atualização de cópias. Em sistemas com snooping, as transações de coerência são transmitidas a todas as caches, enquanto em abordagens com diretório, apenas os participantes relevantes são notificados. No entanto, a coerência introduz overheads de comunicação e pode causar problemas como o **false sharing**, quando processadores acessam endereços distintos na mesma linha de cache, gerando tráfego desnecessário e degradando o desempenho.
+
 ## Consistência de Memória
 
 ## Estratégias de sincronização de grão-fino: Locks
